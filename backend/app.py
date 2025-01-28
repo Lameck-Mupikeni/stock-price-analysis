@@ -1,3 +1,10 @@
+from flask import Flask, request, jsonify
+from prediction_model import fetch_and_predict  # Adjust the import to match your file structure
+
+# Initialize the Flask app
+app = Flask(__name__)
+
+# Define the route
 @app.route('/api/stock', methods=['GET'])
 def get_stock_data():
     symbol = request.args.get('symbol')  
@@ -18,3 +25,7 @@ def get_stock_data():
     
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+# Run the Flask app
+if __name__ == '__main__':
+    app.run(debug=True)
