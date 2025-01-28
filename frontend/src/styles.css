@@ -1,0 +1,105 @@
+/* Reset some basic styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body and overall page styling */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f6f9;
+  color: #333;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+}
+
+/* Main container */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Heading */
+h1 {
+  font-size: 2.5rem;
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 20px;
+}
+
+/* Form styles */
+form {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+label {
+  font-size: 1.1rem;
+  margin-right: 10px;
+  align-self: center;
+}
+
+input[type="text"] {
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  width: 200px;
+  margin-right: 10px;
+  outline: none;
+}
+
+input[type="text"]:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.4);
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #2980b9;
+}
+
+/* Chart styling */
+.chart-container {
+  margin-top: 50px;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.chart-container h2 {
+  text-align: center;
+  font-size: 1.8rem;
+  color: #2c3e50;
+  margin-bottom: 20px;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2rem;
+  }
+
+  input[type="text"] {
+    width: 150px;
+  }
+
+  button {
+    padding: 8px 16px;
+  }
+}
