@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from prediction_model import fetch_and_predict  # Adjust the import to match your file structure
+from models.prediction_model import fetch_and_predict  # Adjust the import to match your file structure
 
 # Initialize the Flask app
 app = Flask(__name__)
