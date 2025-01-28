@@ -15,16 +15,19 @@ def get_stock_data():
     try:
         prediction = fetch_and_predict(symbol)
 
-        # If prediction contains a Timestamp object, convert it to string
+        # If the result is a DataFrame, convert Timestamps to strings
         if isinstance(prediction, pd.DataFrame):
             prediction = prediction.applymap(lambda x: x.isoformat() if isinstance(x, pd.Timestamp) else x)
+            prediction = prediction.to_dict(orient="records")
         
-        # Make sure we convert any remaining Timestamps in the final response
-        prediction = prediction.to_dict(orient="records")
-        prediction = [
-            {key: (value.isoformat() if isinstance(value, pd.Timestamp) else value) for key, value in record.items()}
-            for record in prediction
-        ]
+        # If the result is already a dictionary or list of dictionaries, convert Timestamps
+        elif isinstance(prediction, list):
+            prediction = [
+                {key: (value.isoformat() if isinstance(value, pd.Timestamp) else value) for key, value in record.items()}
+                for record in prediction
+            ]
+        elif isinstance(prediction, dict):
+            prediction = {key: (value.isoformat() if isinstance(value, pd.Timestamp) else value) for key, value in prediction.items()}
 
         return jsonify({"symbol": symbol, "prediction": prediction})
     
