@@ -19,6 +19,13 @@ def get_stock_data():
         if isinstance(prediction, pd.DataFrame):
             prediction = prediction.applymap(lambda x: x.isoformat() if isinstance(x, pd.Timestamp) else x)
         
+        # Make sure we convert any remaining Timestamps in the final response
+        prediction = prediction.to_dict(orient="records")
+        prediction = [
+            {key: (value.isoformat() if isinstance(value, pd.Timestamp) else value) for key, value in record.items()}
+            for record in prediction
+        ]
+
         return jsonify({"symbol": symbol, "prediction": prediction})
     
     except Exception as e:
