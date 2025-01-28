@@ -18,6 +18,10 @@ def fetch_data(symbol):
     df = pd.DataFrame.from_dict(time_series, orient='index')
     df = df.astype(float)
     df.index = pd.to_datetime(df.index)
+    
+    # Convert the datetime index to string format
+    df.index = df.index.strftime('%Y-%m-%d')
+    
     return df
 
 def predict_stock_prices(df):
@@ -25,10 +29,14 @@ def predict_stock_prices(df):
     df = df.sort_index()
     model = ARIMA(df, order=(5, 1, 0))
     model_fit = model.fit()
-    forecast = model_fit.forecast(steps=7)  # Predict the next 7 days
+    forecast = model_fit.forecast(steps=7)        
     return forecast.tolist()
 
 def fetch_and_predict(symbol):
     df = fetch_data(symbol)
     predictions = predict_stock_prices(df)
-    return {'last_prices': df['4. close'].tail(7).to_dict(), 'predictions': predictions}
+    result = {
+        'last_prices': df['4. close'].to_dict(),  # Convert to dictionary for easy JSON serialization
+        'predictions': predictions
+    }
+    return result
