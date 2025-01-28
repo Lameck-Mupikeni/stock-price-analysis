@@ -25,14 +25,10 @@ def predict_stock_prices(df):
     df = df.sort_index()
     model = ARIMA(df, order=(5, 1, 0))
     model_fit = model.fit()
-    forecast = model_fit.forecast(steps=7)
+    forecast = model_fit.forecast(steps=7)  # Predict the next 7 days
     return forecast.tolist()
 
 def fetch_and_predict(symbol):
     df = fetch_data(symbol)
     predictions = predict_stock_prices(df)
-    return {
-        "symbol": symbol,
-        "predictions": predictions,
-        "last_prices": df['4. close'].tail(10).tolist()
-    }
+    return {'last_prices': df['4. close'].tail(7).to_dict(), 'predictions': predictions}
