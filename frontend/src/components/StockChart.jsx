@@ -1,27 +1,34 @@
 import React from 'react';
-import { Line } from 'react-chartjs-2';
 
-const StockChart = ({ data, predictions }) => {
-  const chartData = {
-    labels: data.dates,
-    datasets: [
-      {
-        label: 'Historical Prices',
-        data: data.prices,
-        borderColor: 'blue',
-        fill: false,
-      },
-      {
-        label: 'Predicted Prices',
-        data: predictions,
-        borderColor: 'red',
-        borderDash: [5, 5],
-        fill: false,
-      },
-    ],
-  };
+function StockChart({ data, predictions }) {
+  return (
+    <div>
+      <h2>Stock Data</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Price</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.dates.map((date, index) => (
+            <tr key={date}>
+              <td>{date}</td>
+              <td>{data.prices[index]}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
 
-  return <Line data={chartData} />;
-};
+      <h3>Predictions for the next 7 days</h3>
+      <ul>
+        {predictions && predictions.map((prediction, index) => (
+          <li key={index}>Day {index + 1}: {prediction}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 export default StockChart;
