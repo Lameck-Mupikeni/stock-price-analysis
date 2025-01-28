@@ -18,10 +18,6 @@ def fetch_data(symbol):
     df = pd.DataFrame.from_dict(time_series, orient='index')
     df = df.astype(float)
     df.index = pd.to_datetime(df.index)
-    
-    # Convert the datetime index to string format
-    df.index = df.index.strftime('%Y-%m-%d')
-    
     return df
 
 def predict_stock_prices(df):
@@ -35,8 +31,9 @@ def predict_stock_prices(df):
 def fetch_and_predict(symbol):
     df = fetch_data(symbol)
     predictions = predict_stock_prices(df)
-    result = {
-        'last_prices': df['4. close'].to_dict(),  # Convert to dictionary for easy JSON serialization
+    # Format the data to return for the frontend
+    last_prices = df['4. close'].tail(5).to_dict()  # Last 5 days' closing prices
+    return {
+        'last_prices': last_prices,
         'predictions': predictions
     }
-    return result
