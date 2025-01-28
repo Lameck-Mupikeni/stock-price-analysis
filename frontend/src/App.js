@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import StockForm from './StockForm';
-import StockChart from './StockChart';
+import StockForm from './components/StockForm';
+import StockChart from './components/StockChart';
 
 function App() {
   const [stockData, setStockData] = useState(null);
