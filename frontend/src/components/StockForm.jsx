@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 
-const StockForm = ({ onSubmit }) => {
-  const [symbol, setSymbol] = useState('AAPL');
+function StockForm({ onSubmit }) {
+  const [symbol, setSymbol] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(symbol);
+    if (symbol) {
+      onSubmit(symbol);  // Call parent function to fetch data
+    }
   };
 
   return (
@@ -16,10 +18,11 @@ const StockForm = ({ onSubmit }) => {
         id="symbol"
         value={symbol}
         onChange={(e) => setSymbol(e.target.value)}
+        placeholder="Enter Stock Symbol (e.g., AAPL)"
       />
       <button type="submit">Fetch Data</button>
     </form>
   );
-};
+}
 
 export default StockForm;
