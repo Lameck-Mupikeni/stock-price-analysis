@@ -23,6 +23,9 @@ def fetch_and_predict(symbol, forecast_days=10):
         df = format_date_column(df)  # Convert Date to readable format
         df.set_index('Date', inplace=True)
         
+        # Fill missing values if necessary
+        df = df.fillna(method='ffill')  # Forward fill to handle missing data
+        
         # Add a frequency to the date index
         df = df.asfreq('D')  # Adjust frequency to daily ('D') or as needed
         
