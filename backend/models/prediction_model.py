@@ -1,57 +1,40 @@
-import pandas as pd
-import yfinance as yf
-from statsmodels.tsa.arima.model import ARIMA
-
-def get_stock_data(symbol):
-    """Fetch historical stock data using Yahoo Finance"""
-    try:
-        stock = yf.download(symbol, period="1y")  # Fetch 1 year of data
-        stock.reset_index(inplace=True)  # Ensure 'Date' is a column
-        return stock
-    except Exception as e:
-        raise ValueError(f"Error fetching stock data for symbol {symbol}: {e}")
-
-def format_date_column(df):
-    """Convert the Date column to a more readable format"""
-    df['Date'] = pd.to_datetime(df['Date']).dt.strftime('%Y-%m-%d')
-    return df
+from pmdarima import auto_arima
 
 def fetch_and_predict(symbol, forecast_days=10):
-    """Fetch stock data and make predictions"""
     try:
-        df = get_stock_data(symbol)  # Fetch the stock data
-        df = format_date_column(df)  # Convert Date to readable format
+        df = get_stock_data(symbol)
+        df = format_date_column(df)
         df.set_index('Date', inplace=True)
-        
-        # Fill missing values if necessary
-        df = df.fillna(method='ffill')  # Forward fill to handle missing data
-        
-        # Add a frequency to the date index
-        df = df.asfreq('D')  # Adjust frequency to daily ('D') or as needed
-        
-        # Forecasting logic
-        model = ARIMA(df['Close'], order=(5,1,0))  # Adjust parameters if needed
-        fitted_model = model.fit()
-        forecast = fitted_model.get_forecast(steps=forecast_days)
-        
+
+        # Handle missing values
+        df = df.fillna(method='ffill')
+
+        # Stationarity check and differencing
+        df['Close'] = df['Close'].diff().dropna()
+
+        # Use auto_arima to automatically select the best model
+        model = auto_arima(df['Close'], seasonal=False, trace=True, error_action='ignore', suppress_warnings=True)
+        model.fit(df['Close'])
+        forecast = model.predict(n_periods=forecast_days)
+
         # Convert forecast to DataFrame and handle timestamps
-        forecast_df = forecast.summary_frame()
-        forecast_df.index = forecast_df.index.to_pydatetime()  # Ensure index is datetime
-        forecast_df = format_date_column(forecast_df)  # Convert forecast dates to readable format
-        
+        forecast_dates = pd.date_range(start=df.index[-1], periods=forecast_days + 1, freq='D')[1:]
+        forecast_df = pd.DataFrame(forecast, index=forecast_dates, columns=['Prediction'])
+        forecast_df = format_date_column(forecast_df)
+
         # Include past stock prices
         past_prices = df.reset_index().to_dict(orient='records')
         predictions = forecast_df.reset_index().to_dict(orient='records')
-        
+
         # Return nested response with historical prices and predictions
         response = {
             'symbol': symbol,
             'historical_prices': past_prices,
             'predictions': predictions
         }
-        
+
         return response
-        
+
     except ValueError as e:
         return {'error': str(e)}
     except Exception as e:
