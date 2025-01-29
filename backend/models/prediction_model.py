@@ -1,26 +1,32 @@
 import pandas as pd
-from models.stock_data import get_stock_data  # Ensure this function fetches stock data correctly
+import yfinance as yf
+from statsmodels.tsa.arima.model import ARIMA
 
-def fetch_and_predict(symbol, days=10):
+def get_stock_data(symbol):
+    """Fetch historical stock data using Yahoo Finance"""
     try:
-        # Fetch historical stock data
-        df = get_stock_data(symbol)
-        df['Date'] = pd.to_datetime(df['Date'])
-        df.set_index('Date', inplace=True)
-        df = df.asfreq('D')  # Ensure daily frequency
-
-        # Placeholder forecasting model (replace with an actual model)
-        model = some_model.fit(df['Close'])  # Assuming 'Close' is the column to forecast
-        forecast = model.get_forecast(steps=days)
-        forecast_df = forecast.summary_frame()
-        forecast_df.index = forecast_df.index.strftime('%Y-%m-%d')  # Format index as date strings
-
-        # Merge historical data with predictions
-        historical_prices = df['Close'].tail(10).to_dict()
-        return {
-            "symbol": symbol,
-            "historical_prices": historical_prices,
-            "prediction": forecast_df.to_dict(orient="index")
-        }
+        stock = yf.download(symbol, period="1y")  # Fetch 1 year of data
+        stock.reset_index(inplace=True)  # Ensure 'Date' is a column
+        return stock
     except Exception as e:
-        return {"error": str(e)}
+        raise RuntimeError(f"Error fetching stock data: {e}")
+
+def fetch_and_predict(symbol):
+    # Fetch data (example)
+    df = get_stock_data(symbol)  # Assuming this fetches a DataFrame with a 'Date' column
+    df['Date'] = pd.to_datetime(df['Date'])  # Ensure Date column is in datetime format
+    df.set_index('Date', inplace=True)
+    
+    # Add a frequency to the date index
+    df = df.asfreq('D')  # Adjust frequency to daily ('D') or as needed
+    
+    # Forecasting logic (example)
+    model = ARIMA(df['Close'], order=(5,1,0))  # Adjust parameters if needed
+    fitted_model = model.fit()
+    forecast = fitted_model.get_forecast(steps=10)
+    
+    # Convert forecast to DataFrame and handle timestamps
+    forecast_df = forecast.summary_frame()
+    forecast_df.index = forecast_df.index.to_pydatetime()  # Ensure index is datetime
+
+    return forecast_df
