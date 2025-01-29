@@ -1,9 +1,11 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS  # Import flask_cors
 from models.prediction_model import fetch_and_predict  # Adjust the import to match your file structure
 import pandas as pd  # Ensure this is imported for DataFrame operations
 
 # Initialize the Flask app
 app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
 
 # Define the route
 @app.route('/api/stock', methods=['GET'])

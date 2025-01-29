@@ -8,7 +8,7 @@ function App() {
 
   const fetchStockData = async (symbol) => {
     try {
-      const response = await fetch(`/api/stock?symbol=${symbol}`);
+      const response = await fetch(`http://127.0.0.1:5000/api/stock?symbol=${symbol}`);
       
       // Check if the response is successful
       if (!response.ok) {
