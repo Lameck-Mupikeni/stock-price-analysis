@@ -2,11 +2,16 @@ import React, { useState } from 'react';
 
 function StockForm({ onSubmit }) {
   const [symbol, setSymbol] = useState('');
+  const [error, setError] = useState('');  // To manage error state
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     if (symbol) {
+      setError('');  // Reset any previous errors
       onSubmit(symbol);  // Call parent function to fetch data
+    } else {
+      setError('Please enter a valid stock symbol.');  // Show error message if symbol is empty
     }
   };
 
@@ -21,6 +26,8 @@ function StockForm({ onSubmit }) {
         placeholder="Enter Stock Symbol (e.g., AAPL)"
       />
       <button type="submit">Fetch Data</button>
+
+      {error && <p style={{ color: 'red' }}>{error}</p>}  {/* Display error message if any */}
     </form>
   );
 }
