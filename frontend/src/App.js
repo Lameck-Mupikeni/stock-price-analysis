@@ -8,7 +8,8 @@ function App() {
 
   const fetchStockData = async (symbol) => {
     try {
-      const response = await fetch(`http://127.0.0.1:5000/api/stock?symbol=${symbol}`);
+      // Use the deployed URL for the API
+      const response = await fetch(`https://stock-price-analysis-2.onrender.com/api/stock?symbol=${symbol}`);
       
       if (!response.ok) {
         throw new Error('Stock data not found');
