@@ -1,3 +1,4 @@
+import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS  # Import flask_cors
 from models.prediction_model import fetch_and_predict  # Adjust the import to match your file structure
@@ -7,7 +8,7 @@ import pandas as pd  # Ensure this is imported for DataFrame operations
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
-# Define the route
+# Define the stock prediction route
 @app.route('/api/stock', methods=['GET'])
 def get_stock_data():
     symbol = request.args.get('symbol')  
@@ -38,6 +39,12 @@ def get_stock_data():
         print("Error during fetch_and_predict:", str(e))
         return jsonify({"error": str(e)}), 500
 
-# Run the Flask app
-if __name__ == '__main__':
-    app.run(debug=True)
+# Define the home route
+@app.route('/')
+def home():
+    return "Hello, World!"
+
+# Run the Flask app with the appropriate host and port
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 1000))  # Default to 1000 if PORT isn't set
+    app.run(host="0.0.0.0", port=port)
