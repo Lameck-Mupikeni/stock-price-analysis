@@ -2,4 +2,7 @@ sk
 requests
 pandas
 statsmodels
+flask
+flask-cors
+gunicorn
 
