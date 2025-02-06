@@ -10,10 +10,9 @@ function App() {
 
   const fetchStockData = async (symbol) => {
     setLoading(true);
-    setError(null); // Reset error message before making a request
+    setError(null);
 
     try {
-      // Fetch stock data from the deployed backend API
       const response = await fetch(
         `https://stock-price-analysis-3.onrender.com/api/stock?symbol=${symbol}`
       );
@@ -23,31 +22,27 @@ function App() {
       }
 
       const data = await response.json();
-      console.log("API Response:", data); // Debugging: Log API response
+      console.log("API Response:", data);
 
       if (!data.prediction || typeof data.prediction !== "object") {
-        throw new Error(
-          "Invalid response structure: 'prediction' is missing or incorrect"
-        );
+        throw new Error("Invalid response structure: 'prediction' is missing or incorrect");
       }
 
-      // Convert API response into a usable format for Chart.js
-      const formattedPredictions = Object.entries(data.prediction).map(
-        ([date, values]) => ({
-          date,
-          mean: values.mean,
-        })
-      );
+      // Transform API response into an object with date keys
+      const formattedPredictions = {};
+      Object.entries(data.prediction).forEach(([date, values]) => {
+        formattedPredictions[date] = { mean: values.mean };
+      });
 
       setStockData({
         symbol: data.symbol,
-        predictions: formattedPredictions,
+        predictions: formattedPredictions, // Store as an object
       });
     } catch (error) {
       console.error("Error fetching data:", error);
-      setError(error.message); // Store error message for UI display
+      setError(error.message);
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false);
     }
   };
 
@@ -61,12 +56,8 @@ function App() {
 
       {stockData && (
         <StockChart
-          data={{
-            dates: stockData.predictions.map((item) => item.date), // Extract dates
-            prices: stockData.predictions.map((item) => item.mean), // Extract predicted prices
-          }}
-          predictions={stockData.predictions} // Pass formatted predictions to StockChart
-          stockSymbol={stockData.symbol} // Pass stock symbol for better display
+          stockData={stockData.predictions} // Pass stockData as an object
+          stockSymbol={stockData.symbol} // Pass stock symbol
         />
       )}
     </div>
